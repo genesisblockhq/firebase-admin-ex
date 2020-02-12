@@ -2,7 +2,10 @@ defmodule FirebaseAdminEx.Response do
   def parse(%HTTPoison.Response{} = response) do
     case response do
       %HTTPoison.Response{status_code: 200, body: body} ->
-        {:ok, body}
+        case Jason.decode(body) do
+          {:ok, _} = decoded -> decoded
+          {:error, _} -> {:ok, body}
+        end
 
       %HTTPoison.Response{status_code: status_code, body: body} ->
         error_message = Jason.decode!(body) |> Map.get("error", %{}) |> Map.get("message")

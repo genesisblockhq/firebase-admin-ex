@@ -29,9 +29,6 @@ use Mix.Config
 #
 
 config :firebase_admin_ex,
-  default_options: [
-    timeout: 5000,
-    recv_timeout: 2000
-  ]
+  default_options: []
 
 import_config "#{Mix.env()}.exs"
