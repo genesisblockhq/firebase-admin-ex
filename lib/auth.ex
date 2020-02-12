@@ -16,6 +16,15 @@ defmodule FirebaseAdminEx.Auth do
     do_request("accounts", %{email: email, password: password}, client_email, project_id)
   end
 
+  @spec update_user(String.t(), map) :: {:ok, map} | {:error, term}
+  @spec update_user(String.t(), map, String.t() | nil) :: {:ok, map} | {:error, term}
+  @spec update_user(String.t(), map, String.t() | nil, String.t() | nil) ::
+          {:ok, map} | {:error, term}
+  def update_user(uid, updates, client_email \\ nil, project_id \\ nil) do
+    args = Map.put(updates, :localId, uid)
+    do_request("accounts:update", args, client_email, project_id)
+  end
+
   @doc """
   Generates the email action link for sign-in flows, using the action code settings provided
   """
