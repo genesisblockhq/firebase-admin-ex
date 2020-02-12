@@ -8,10 +8,11 @@ defmodule FirebaseAdminEx.Auth do
   @doc """
   Create an email/password user
   """
-  @spec create_user(String.t(), String.t(), String.t()) :: {:ok, map} | {:error, term}
-  @spec create_user(String.t(), String.t(), String.t() | nil, String.t()) ::
+  @spec create_user(String.t(), String.t()) :: {:ok, map} | {:error, term}
+  @spec create_user(String.t(), String.t(), String.t() | nil) :: {:ok, map} | {:error, term}
+  @spec create_user(String.t(), String.t(), String.t() | nil, String.t() | nil) ::
           {:ok, map} | {:error, term}
-  def create_user(email, password, client_email \\ nil, project_id) do
+  def create_user(email, password, client_email \\ nil, project_id \\ nil) do
     do_request("accounts", %{email: email, password: password}, client_email, project_id)
   end
 
@@ -23,6 +24,13 @@ defmodule FirebaseAdminEx.Auth do
   def generate_sign_in_with_email_link(action_code_settings, client_email, project_id) do
     with {:ok, action_code_settings} <- ActionCodeSettings.validate(action_code_settings) do
       do_request("accounts:sendOobCode", action_code_settings, client_email, project_id)
+    end
+  end
+
+  defp do_request(url_suffix, payload, client_email, nil) do
+    case Goth.Config.get(:project_id) do
+      {:ok, project_id} -> do_request(url_suffix, payload, client_email, project_id)
+      :error -> {:error, :missing_project_id}
     end
   end
 
