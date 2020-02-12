@@ -7,9 +7,12 @@ defmodule FirebaseAdminEx.Response do
           {:error, _} -> {:ok, body}
         end
 
-      %HTTPoison.Response{status_code: status_code, body: body} ->
-        error_message = Jason.decode!(body) |> Map.get("error", %{}) |> Map.get("message")
-        {:error, "#{status_code} - #{error_message}"}
+      %HTTPoison.Response{status_code: status, body: body} ->
+        case Jason.decode(body) do
+          {:ok, %{"error" => %{"message" => reason}}} -> {:error, reason}
+          {:ok, resp} -> {:error, {:unexpected_response, status, resp}}
+          {:error, _} -> {:error, {:unexpected_response, status, body}}
+        end
     end
   end
 

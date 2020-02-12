@@ -1,5 +1,5 @@
 defmodule FirebaseAdminEx.Auth do
-  alias FirebaseAdminEx.{Request, Response, Errors}
+  alias FirebaseAdminEx.{Request, Response}
   alias FirebaseAdminEx.Auth.ActionCodeSettings
 
   @auth_endpoint_account "https://identitytoolkit.googleapis.com/v1/projects/"
@@ -12,13 +12,7 @@ defmodule FirebaseAdminEx.Auth do
   @spec create_user(String.t(), String.t(), String.t() | nil, String.t()) ::
           {:ok, map} | {:error, term}
   def create_user(email, password, client_email \\ nil, project_id) do
-    payload = %{
-      email: email,
-      password: password,
-      returnSecureToken: false
-    }
-
-    do_request("accounts", payload, client_email, project_id)
+    do_request("accounts", %{email: email, password: password}, client_email, project_id)
   end
 
   @doc """
@@ -39,11 +33,8 @@ defmodule FirebaseAdminEx.Auth do
              "#{@auth_endpoint_account}#{project_id}/#{url_suffix}",
              payload,
              auth_header(client_email)
-           ),
-         {:ok, body} <- Response.parse(response) do
-      {:ok, body}
-    else
-      {:error, error} -> raise Errors.ApiError, Kernel.inspect(error)
+           ) do
+      Response.parse(response)
     end
   end
 
