@@ -18,17 +18,17 @@ defmodule FirebaseAdminEx.Auth.ActionCodeSettings do
   ]
 
   @type t :: %__MODULE__{
-    requestType: String.t(),
-    email: String.t(),
-    returnOobLink: boolean(),
-    continueUrl: String.t(),
-    canHandleCodeInApp: boolean(),
-    dynamicLinkDomain: String.t(),
-    androidPackageName: String.t(),
-    androidMinimumVersion: String.t(),
-    androidInstallApp: boolean(),
-    iOSBundleId: String.t()
-  }
+          requestType: String.t(),
+          email: String.t(),
+          returnOobLink: boolean(),
+          continueUrl: String.t(),
+          canHandleCodeInApp: boolean(),
+          dynamicLinkDomain: String.t(),
+          androidPackageName: String.t(),
+          androidMinimumVersion: String.t(),
+          androidInstallApp: boolean(),
+          iOSBundleId: String.t()
+        }
 
   @derive Jason.Encoder
   defstruct @keys
@@ -51,7 +51,7 @@ defmodule FirebaseAdminEx.Auth.ActionCodeSettings do
 
   def validate(%__MODULE__{email: nil}),
     do: {:error, "[ActionCodeSettings] email is missing"}
-  
+
   def validate(%__MODULE__{} = action_code_settings),
     do: {:ok, action_code_settings}
 

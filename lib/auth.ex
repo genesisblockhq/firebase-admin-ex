@@ -24,7 +24,8 @@ defmodule FirebaseAdminEx.Auth do
   @doc """
   Generates the email action link for sign-in flows, using the action code settings provided
   """
-  @spec generate_sign_in_with_email_link(ActionCodeSettings.t(), String.t(), String.t()) :: tuple()
+  @spec generate_sign_in_with_email_link(ActionCodeSettings.t(), String.t(), String.t()) ::
+          tuple()
   def generate_sign_in_with_email_link(action_code_settings, client_email, project_id) do
     with {:ok, action_code_settings} <- ActionCodeSettings.validate(action_code_settings) do
       do_request("accounts:sendOobCode", action_code_settings, client_email, project_id)

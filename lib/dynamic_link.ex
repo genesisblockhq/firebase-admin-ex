@@ -35,6 +35,7 @@ defmodule FirebaseAdminEx.DynamicLink do
   @spec short_link(map() | String.t(), suffix_type, String.t() | nil) :: tuple()
   def short_link(params, type \\ :unguessable, client_email \\ nil) do
     payload = build_payload(params, type)
+
     with {:ok, response} <-
            Request.request(
              :post,
@@ -57,7 +58,7 @@ defmodule FirebaseAdminEx.DynamicLink do
     }
   end
 
-  defp build_payload(params, type) when is_map(params)do
+  defp build_payload(params, type) when is_map(params) do
     %{
       "dynamicLinkInfo" => params,
       "suffix" => %{"option" => option(type)}
