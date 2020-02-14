@@ -2,7 +2,7 @@ defmodule FirebaseAdminEx.Auth do
   alias FirebaseAdminEx.{Request, Response}
   alias FirebaseAdminEx.Auth.ActionCodeSettings
 
-  @auth_endpoint_account "https://identitytoolkit.googleapis.com/v1/projects/"
+  @auth_endpoint "https://identitytoolkit.googleapis.com/v1/"
   @auth_scope "https://www.googleapis.com/auth/cloud-platform"
 
   @doc """
@@ -25,6 +25,13 @@ defmodule FirebaseAdminEx.Auth do
     do_request("accounts:update", args, client_email, project_id)
   end
 
+  @spec reset_password(String.t(), String.t()) :: {:ok, map} | {:error, term}
+  @spec reset_password(String.t(), String.t(), String.t() | nil) :: {:ok, map} | {:error, term}
+  def reset_password(oob_code, password, client_email \\ nil) do
+    args = %{oobCode: oob_code, newPassword: password}
+    do_request("accounts:resetPassword", args, client_email)
+  end
+
   @doc """
   Generates the email action link for sign-in flows, using the action code settings provided
   """
@@ -44,10 +51,14 @@ defmodule FirebaseAdminEx.Auth do
   end
 
   defp do_request(url_suffix, payload, client_email, project_id) do
+    do_request("projects/#{project_id}/#{url_suffix}", payload, client_email)
+  end
+
+  defp do_request(url_suffix, payload, client_email) do
     with {:ok, response} <-
            Request.request(
              :post,
-             "#{@auth_endpoint_account}#{project_id}/#{url_suffix}",
+             @auth_endpoint <> url_suffix,
              payload,
              auth_header(client_email)
            ) do
