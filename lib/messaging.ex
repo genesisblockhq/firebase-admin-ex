@@ -16,6 +16,9 @@ defmodule FirebaseAdminEx.Messaging do
     with {:ok, project_id} <- Goth.Config.get(:project_id),
          {:ok, token} <- Goth.Token.for_scope(@messaging_scope) do
       send(project_id, token.token, message)
+    else
+      :error -> {:error, :missing_project_id}
+      {:error, _} = error -> error
     end
   end
 
@@ -29,6 +32,9 @@ defmodule FirebaseAdminEx.Messaging do
     with {:ok, project_id} <- Goth.Config.get(client_email, :project_id),
          {:ok, token} <- Goth.Token.for_scope({client_email, @messaging_scope}) do
       send(project_id, token.token, message)
+    else
+      :error -> {:error, :missing_project_id}
+      {:error, _} = error -> error
     end
   end
 
