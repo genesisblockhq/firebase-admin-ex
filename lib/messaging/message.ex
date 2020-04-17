@@ -15,15 +15,15 @@ defmodule FirebaseAdminEx.Messaging.Message do
     webpush: nil,
     android: nil,
     apns: nil,
-    token: ""
+    token: nil
   ]
 
-  @type t :: %__MODULE__{
+  @type t :: %Message{
           data: map(),
           notification: map(),
-          webpush: struct(),
-          android: struct(),
-          apns: struct(),
+          webpush: WebMessageConfig.t() | nil,
+          android: AndroidMessageConfig.t() | nil,
+          apns: APNSMessageConfig.t() | nil,
           token: String.t()
         }
 
@@ -66,42 +66,18 @@ defmodule FirebaseAdminEx.Messaging.Message do
     }
   end
 
-  def validate(%Message{data: _, token: nil}), do: {:error, "[Message] token is missing"}
+  def validate(%Message{token: nil}), do: {:error, "[Message] token is missing"}
 
-  def validate(%Message{data: _, token: _, webpush: nil, android: nil, apns: nil} = message),
-    do: {:ok, message}
-
-  def validate(%Message{data: _, token: _, webpush: web_message_config} = message)
-      when web_message_config != nil do
-    case WebMessageConfig.validate(web_message_config) do
-      {:ok, _} ->
-        {:ok, message}
-
-      {:error, error_message} ->
-        {:error, error_message}
-    end
-  end
-
-  def validate(%Message{data: _, token: _, android: android_message_config} = message)
-      when android_message_config != nil do
-    case AndroidMessageConfig.validate(android_message_config) do
-      {:ok, _} ->
-        {:ok, message}
-
-      {:error, error_message} ->
-        {:error, error_message}
-    end
-  end
-
-  def validate(%Message{data: _, token: _, apns: apns_message_config} = message)
-      when apns_message_config != nil do
-    case APNSMessageConfig.validate(apns_message_config) do
-      {:ok, _} ->
-        {:ok, message}
-
-      {:error, error_message} ->
-        {:error, error_message}
-    end
+  def validate(%Message{} = message) do
+    [
+      message.webpush && WebMessageConfig.validate(message.webpush),
+      message.android && AndroidMessageConfig.validate(message.android),
+      message.apns && APNSMessageConfig.validate(message.apns)
+    ]
+    |> Enum.find({:ok, message}, fn
+      {:error, _} -> true
+      _ -> false
+    end)
   end
 
   def validate(_), do: {:error, "[Message] Invalid payload"}
