@@ -9,7 +9,7 @@ defmodule FirebaseAdminEx.Response do
 
       %HTTPoison.Response{status_code: status, body: body} ->
         case Jason.decode(body) do
-          {:ok, %{"error" => %{"message" => reason}}} -> {:error, reason}
+          {:ok, %{"error" => error}} -> {:error, error}
           {:ok, resp} -> {:error, {:unexpected_response, status, resp}}
           {:error, _} -> {:error, {:unexpected_response, status, body}}
         end
