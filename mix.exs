@@ -25,11 +25,11 @@ defmodule FirebaseAdminEx.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false},
+      {:goth, "~> 1.1"},
       {:httpoison, "~> 1.5"},
       {:jason, "~> 1.1"},
       {:mock, "~> 0.3.3", only: :test},
-      {:goth, "~> 1.1"},
-      {:ex_doc, "~> 0.21.2", only: :dev, runtime: false}
     ]
   end
 
@@ -40,7 +40,8 @@ defmodule FirebaseAdminEx.MixProject do
   defp package do
     [
       licenses: ["Apache 2.0"],
-      links: %{"GitHub" => "https://github.com/scripbox/firebase-admin-ex"}
+      links: %{"GitHub" => "https://github.com/scripbox/firebase-admin-ex"},
+      organization: "genesisblock"
     ]
   end
 end
